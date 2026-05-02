@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paperhood — Not Just Stationery. A Student Experience.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --black: #0a0a08;
+    --black2: #111110;
+    --charcoal: #1a1a18;
+    --beige: #e8e0d0;
+    --beige2: #f2ede4;
+    --off-white: #f7f4ef;
+    --muted: #9a9488;
+    --gold: #c9a96e;
+    --gold2: #e8c88a;
+    --accent: #d4b896;
+    --text: #e8e0d0;
+    --text2: #b0a898;
+    --border: rgba(201,169,110,0.15);
+    --glass: rgba(255,255,255,0.03);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--black);
+    color: var(--text);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom Cursor */
+  .cursor {
+    width: 8px; height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.3s, height 0.3s, background 0.3s;
+  }
+  .cursor-ring {
+    width: 32px; height: 32px;
+    border: 1px solid rgba(201,169,110,0.5);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease-out, width 0.3s, height 0.3s, opacity 0.3s;
+  }
+  .cursor.expanded { width: 16px; height: 16px; background: var(--gold2); }
+  .cursor-ring.expanded { width: 56px; height: 56px; opacity: 0.3; }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.6;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.5rem 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.4s, backdrop-filter 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(10,10,8,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: var(--off-white);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--gold); }
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text2);
+    text-decoration: none;
+    transition: color 0.3s;
+    font-weight: 500;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-cta {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--gold);
+    padding: 0.6rem 1.4rem;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    cursor: none;
+    transition: background 0.3s, transform 0.2s;
+  }
+  .nav-cta:hover { background: var(--gold2); transform: translateY(-1px); }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0 4rem;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(201,169,110,0.07) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 20% 80%, rgba(201,169,110,0.04) 0%, transparent 60%),
+                var(--black);
+    animation: breathe 8s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+  }
+
+  .hero-lines {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    opacity: 0.06;
+  }
+  .hero-lines::before, .hero-lines::after {
+    content: '';
+    position: absolute;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+    animation: scanline 6s ease-in-out infinite;
+  }
+  .hero-lines::before { left: 30%; animation-delay: 0s; }
+  .hero-lines::after { left: 70%; animation-delay: 3s; }
+  @keyframes scanline {
+    0%, 100% { opacity: 0; transform: scaleY(0); }
+    50% { opacity: 1; transform: scaleY(1); }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 900px;
+  }
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s ease forwards;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 7vw, 6.5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--off-white);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.5s ease forwards;
+  }
+  .hero-title .italic { font-style: italic; color: var(--gold); }
+  .hero-subtitle {
+    font-size: 1rem;
+    color: var(--text2);
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    max-width: 500px;
+    margin: 0 auto 3rem;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.7s ease forwards;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 1.2rem;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.9s ease forwards;
+  }
+  .btn-primary {
+    display: inline-block;
+    padding: 1rem 2.5rem;
+    background: var(--gold);
+    color: var(--black);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    text-decoration: none;
+    cursor: none;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gold2);
+    transform: translateX(-101%);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .btn-primary:hover { transform: translateY(-3px); }
+  .btn-primary:hover::after { transform: translateX(0); }
+  .btn-primary span { position: relative; z-index: 1; }
+
+  .btn-ghost {
+    display: inline-block;
+    padding: 1rem 2.5rem;
+    border: 1px solid var(--border);
+    color: var(--text2);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    text-decoration: none;
+    cursor: none;
+    transition: border-color 0.3s, color 0.3s, transform 0.3s;
+  }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-3px); }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 1s 1.4s ease forwards;
+  }
+  .hero-scroll span {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+  }
+  .scroll-line {
+    width: 1px;
+    height: 50px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(0.5); }
+    50% { opacity: 1; transform: scaleY(1); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* MARQUEE */
+  .marquee-section {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 1.2rem 0;
+    overflow: hidden;
+    background: var(--charcoal);
+  }
+  .marquee-track {
+    display: flex;
+    gap: 3rem;
+    animation: marquee 20s linear infinite;
+    white-space: nowrap;
+  }
+  .marquee-item {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .marquee-item::after {
+    content: '◆';
+    font-size: 0.4rem;
+    color: var(--muted);
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* SECTIONS */
+  section { padding: 8rem 4rem; position: relative; }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .section-label::before {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.5;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 700;
+    color: var(--off-white);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+  .section-title .italic { font-style: italic; color: var(--gold); }
+
+  /* PRODUCTS */
+  .products-section { background: var(--black2); }
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-top: 4rem;
+  }
+  .product-card {
+    position: relative;
+    aspect-ratio: 3/4;
+    overflow: hidden;
+    background: var(--charcoal);
+    cursor: none;
+    group: true;
+  }
+  .product-card-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.5rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%);
+    transition: background 0.4s;
+  }
+  .product-card:hover .product-card-inner {
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.3) 100%);
+  }
+  .product-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    font-size: 4rem;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 0.8;
+  }
+  .product-card:hover .product-icon {
+    transform: translate(-50%, -60%) scale(1.1);
+    opacity: 1;
+  }
+  .product-cat {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .product-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--off-white);
+    margin-bottom: 0.5rem;
+  }
+  .product-desc {
+    font-size: 0.75rem;
+    color: var(--text2);
+    line-height: 1.5;
+    transform: translateY(10px);
+    opacity: 0;
+    transition: all 0.4s 0.1s;
+  }
+  .product-card:hover .product-desc { opacity: 1; transform: translateY(0); }
+  .product-price {
+    margin-top: 0.8rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--gold2);
+    letter-spacing: 0.1em;
+  }
+  .product-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(201,169,110,0.1), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .product-card:hover .product-glow { opacity: 1; }
+
+  /* FEATURED large card */
+  .product-card.large {
+    grid-column: span 2;
+    aspect-ratio: 16/9;
+  }
+
+  /* WHY US */
+  .why-section { background: var(--black); }
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 4rem;
+  }
+  .why-card {
+    padding: 2.5rem;
+    border: 1px solid var(--border);
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.4s, transform 0.4s;
+    cursor: none;
+  }
+  .why-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 2px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+    transform: scaleX(0);
+    transition: transform 0.4s;
+  }
+  .why-card:hover { border-color: rgba(201,169,110,0.3); transform: translateY(-4px); }
+  .why-card:hover::before { transform: scaleX(1); }
+  .why-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem;
+    font-weight: 900;
+    color: rgba(201,169,110,0.08);
+    line-height: 1;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+  }
+  .why-icon { font-size: 1.8rem; margin-bottom: 1rem; }
+  .why-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--off-white);
+    margin-bottom: 0.8rem;
+    font-weight: 700;
+  }
+  .why-text {
+    font-size: 0.85rem;
+    color: var(--text2);
+    line-height: 1.8;
+  }
+
+  /* EXPERIENCE */
+  .experience-section {
+    background: var(--charcoal);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+    padding: 8rem 4rem;
+  }
+  .experience-visual {
+    position: relative;
+    height: 500px;
+  }
+  .exp-box {
+    position: absolute;
+    background: var(--black2);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    transition: transform 0.4s;
+  }
+  .exp-box.main {
+    width: 75%;
+    height: 75%;
+    top: 0; left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5rem;
+  }
+  .exp-box.accent {
+    width: 50%;
+    height: 45%;
+    bottom: 0; right: 0;
+    background: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .exp-box.accent .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--black);
+  }
+  .exp-box.accent .label {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(0,0,0,0.6);
+    font-weight: 500;
+  }
+  .experience-visual:hover .exp-box.main { transform: translate(5px, -5px); }
+  .experience-visual:hover .exp-box.accent { transform: translate(-5px, 5px); }
+
+  .experience-text .section-label { margin-bottom: 1rem; }
+  .exp-list {
+    margin-top: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    list-style: none;
+  }
+  .exp-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    font-size: 0.9rem;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+  .exp-list li::before {
+    content: '—';
+    color: var(--gold);
+    flex-shrink: 0;
+    margin-top: 0.05rem;
+  }
+
+  /* SOCIAL */
+  .social-section { background: var(--black2); }
+  .social-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+    margin-top: 4rem;
+  }
+  .social-card {
+    aspect-ratio: 1;
+    background: var(--charcoal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    cursor: none;
+    border: 1px solid transparent;
+    transition: border-color 0.3s;
+  }
+  .social-card:hover { border-color: var(--border); }
+  .social-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(201,169,110,0.12);
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .social-card:hover .social-overlay { opacity: 1; }
+  .social-overlay-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+  .social-tag {
+    font-size: 0.7rem;
+    color: rgba(201,169,110,0.7);
+  }
+  .social-label {
+    text-align: center;
+    margin-top: 3rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+  .social-label a {
+    color: var(--gold);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(201,169,110,0.3);
+    transition: border-color 0.3s;
+  }
+  .social-label a:hover { border-color: var(--gold); }
+
+  /* CTA */
+  .cta-section {
+    background: var(--gold);
+    text-align: center;
+    padding: 8rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-section::before {
+    content: 'PAPERHOOD';
+    position: absolute;
+    font-family: 'Playfair Display', serif;
+    font-size: 18vw;
+    font-weight: 900;
+    color: rgba(0,0,0,0.05);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    letter-spacing: -0.04em;
+    pointer-events: none;
+  }
+  .cta-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(0,0,0,0.5);
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+  .cta-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 900;
+    color: var(--black);
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+  .cta-sub {
+    font-size: 1rem;
+    color: rgba(0,0,0,0.5);
+    margin-bottom: 3rem;
+    position: relative;
+  }
+  .btn-dark {
+    display: inline-block;
+    padding: 1.1rem 3rem;
+    background: var(--black);
+    color: var(--gold);
+    font-size: 0.78rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    text-decoration: none;
+    cursor: none;
+    position: relative;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
+  }
+  .btn-dark:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+
+  /* FOOTER */
+  footer {
+    background: var(--black);
+    padding: 5rem 4rem 3rem;
+    border-top: 1px solid var(--border);
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+    gap: 4rem;
+    margin-bottom: 4rem;
+  }
+  .footer-brand .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--off-white);
+    margin-bottom: 1rem;
+  }
+  .footer-brand .logo span { color: var(--gold); }
+  .footer-brand p {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.8;
+    max-width: 260px;
+  }
+  .footer-col h4 {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+  }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
+  .footer-col ul a {
+    font-size: 0.82rem;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .footer-col ul a:hover { color: var(--gold); }
+  .footer-contact-item {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+    align-items: flex-start;
+  }
+  .contact-icon { font-size: 0.85rem; margin-top: 0.1rem; flex-shrink: 0; }
+  .contact-info { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+  .contact-info a { color: var(--muted); text-decoration: none; transition: color 0.3s; }
+  .contact-info a:hover { color: var(--gold); }
+  .footer-bottom {
+    border-top: 1px solid var(--border);
+    padding-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-copy {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+  }
+  .footer-social {
+    display: flex;
+    gap: 1.5rem;
+  }
+  .footer-social a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+  .footer-social a:hover { color: var(--gold); }
+
+  /* SCROLL ANIMATIONS */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+  .reveal-delay-5 { transition-delay: 0.5s; }
+
+  /* PARALLAX bg text */
+  .parallax-text {
+    position: absolute;
+    font-family: 'Playfair Display', serif;
+    font-size: 20vw;
+    font-weight: 900;
+    color: rgba(201,169,110,0.025);
+    white-space: nowrap;
+    user-select: none;
+    pointer-events: none;
+    top: 50%;
+    transform: translateY(-50%);
+    letter-spacing: -0.05em;
+  }
+
+  /* MOBILE */
+  @media (max-width: 1024px) {
+    nav { padding: 1.5rem 2rem; }
+    .nav-links { display: none; }
+    section, .experience-section, footer { padding: 5rem 2rem; }
+    .hero { padding: 0 2rem; }
+    .products-grid { grid-template-columns: repeat(2, 1fr); }
+    .product-card.large { grid-column: span 2; }
+    .why-grid { grid-template-columns: 1fr; }
+    .experience-section { grid-template-columns: 1fr; }
+    .experience-visual { height: 300px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .social-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .hero-title { font-size: clamp(2.2rem, 10vw, 3.5rem); }
+    .products-grid { grid-template-columns: 1fr; }
+    .product-card.large { aspect-ratio: 3/4; }
+    .social-grid { grid-template-columns: repeat(2, 1fr); }
+    .footer-grid { grid-template-columns: 1fr; }
+    .hero-actions { flex-direction: column; align-items: center; }
+    body { cursor: auto; }
+    .cursor, .cursor-ring { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">Paper<span>hood</span></a>
+  <ul class="nav-links">
+    <li><a href="#products">Products</a></li>
+    <li><a href="#why">Why Us</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#social">Gallery</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Visit Us</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-lines"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Pathamadai, Tirunelveli · Est. 2024</p>
+    <h1 class="hero-title">Not Just Stationery.<br>A <span class="italic">Student</span> Experience.</h1>
+    <p class="hero-subtitle">Where CBSE aspirants discover tools that match their ambition. Premium. Aesthetic. Yours.</p>
+    <div class="hero-actions">
+      <a href="#products" class="btn-primary"><span>Explore Collections</span></a>
+      <a href="#experience" class="btn-ghost">Our Vibe</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track">
+    <span class="marquee-item">Premium Pens</span>
+    <span class="marquee-item">Exam Essentials</span>
+    <span class="marquee-item">Aesthetic Stationery</span>
+    <span class="marquee-item">CBSE Kits</span>
+    <span class="marquee-item">Study Planners</span>
+    <span class="marquee-item">Art Supplies</span>
+    <span class="marquee-item">Premium Notebooks</span>
+    <span class="marquee-item">Paperhood Exclusives</span>
+    <span class="marquee-item">Premium Pens</span>
+    <span class="marquee-item">Exam Essentials</span>
+    <span class="marquee-item">Aesthetic Stationery</span>
+    <span class="marquee-item">CBSE Kits</span>
+    <span class="marquee-item">Study Planners</span>
+    <span class="marquee-item">Art Supplies</span>
+    <span class="marquee-item">Premium Notebooks</span>
+    <span class="marquee-item">Paperhood Exclusives</span>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<section class="products-section" id="products">
+  <div class="parallax-text">WRITE</div>
+  <div class="reveal">
+    <div class="section-label">Curated for Achievers</div>
+    <h2 class="section-title">Collections That<br>Inspire <span class="italic">Greatness</span></h2>
+  </div>
+  <div class="products-grid">
+
+    <div class="product-card large reveal reveal-delay-1">
+      <div class="product-glow"></div>
+      <div class="product-icon">✒️</div>
+      <div class="product-card-inner">
+        <div class="product-cat">Signature Series</div>
+        <div class="product-name">Premium Pen Collection</div>
+        <div class="product-desc">Gel, ink & fountain pens that write as fast as your thoughts. Crafted for long study sessions.</div>
+        <div class="product-price">Starting ₹25</div>
+      </div>
+    </div>
+
+    <div class="product-card reveal reveal-delay-2">
+      <div class="product-glow"></div>
+      <div class="product-icon">📓</div>
+      <div class="product-card-inner">
+        <div class="product-cat">Notebooks</div>
+        <div class="product-name">Ruled & Dot Grid</div>
+        <div class="product-desc">Thick, bleed-proof pages that hold every idea.</div>
+        <div class="product-price">Starting ₹40</div>
+      </div>
+    </div>
+
+    <div class="product-card reveal reveal-delay-3">
+      <div class="product-glow"></div>
+      <div class="product-icon">🎨</div>
+      <div class="product-card-inner">
+        <div class="product-cat">Art & Colour</div>
+        <div class="product-name">Highlighter Sets</div>
+        <div class="product-desc">Pastel & neon palettes for aesthetic notes.</div>
+        <div class="product-price">Starting ₹60</div>
+      </div>
+    </div>
+
+    <div class="product-card reveal reveal-delay-1">
+      <div class="product-glow"></div>
+      <div class="product-icon">📐</div>
+      <div class="product-card-inner">
+        <div class="product-cat">Geometry & Math</div>
+        <div class="product-name">Precision Kit</div>
+        <div class="product-desc">Board-exam ready geometry sets with compasses & rulers.</div>
+        <div class="product-price">Starting ₹80</div>
+      </div>
+    </div>
+
+    <div class="product-card reveal reveal-delay-2">
+      <div class="product-glow"></div>
+      <div class="product-icon">🗓️</div>
+      <div class="product-card-inner">
+        <div class="product-cat">Planning</div>
+        <div class="product-name">Study Planner</div>
+        <div class="product-desc">Undated weekly planners to own your schedule.</div>
+        <div class="product-price">Starting ₹90</div>
+      </div>
+    </div>
+
+    <div class="product-card large reveal reveal-delay-3">
+      <div class="product-glow"></div>
+      <div class="product-icon">🎒</div>
+      <div class="product-card-inner">
+        <div class="product-cat">Exam Ready</div>
+        <div class="product-name">CBSE Exam Kit</div>
+        <div class="product-desc">Everything a CBSE student needs — curated, packed & ready for the big day. Pens, scales, erasers & more.</div>
+        <div class="product-price">Starting ₹120</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="why-section" id="why">
+  <div class="reveal" style="text-align:center; max-width:600px; margin: 0 auto 0;">
+    <div class="section-label" style="justify-content:center">The Paperhood Promise</div>
+    <h2 class="section-title" style="text-align:center">Why Students <span class="italic">Love</span> Us</h2>
+  </div>
+  <div class="why-grid">
+    <div class="why-card reveal reveal-delay-1">
+      <div class="why-number">01</div>
+      <div class="why-icon">✨</div>
+      <div class="why-title">Aesthetic First</div>
+      <p class="why-text">Every product is handpicked not just for function, but for how it looks on your desk. Because your study space is your identity.</p>
+    </div>
+    <div class="why-card reveal reveal-delay-2">
+      <div class="why-number">02</div>
+      <div class="why-icon">🎯</div>
+      <div class="why-title">CBSE Focused</div>
+      <p class="why-text">Built specifically for CBSE board students. From Class 6 to Class 12, we know what you need before your exams.</p>
+    </div>
+    <div class="why-card reveal reveal-delay-3">
+      <div class="why-number">03</div>
+      <div class="why-icon">💰</div>
+      <div class="why-title">Student Prices</div>
+      <p class="why-text">Premium quality doesn't have to break your pocket money. Fair prices that your parents won't question twice.</p>
+    </div>
+    <div class="why-card reveal reveal-delay-1">
+      <div class="why-number">04</div>
+      <div class="why-icon">🏠</div>
+      <div class="why-title">Right Next Door</div>
+      <p class="why-text">Located in Pathamadai, steps from school. Drop in between classes, after tuition, or whenever inspiration strikes.</p>
+    </div>
+    <div class="why-card reveal reveal-delay-2">
+      <div class="why-number">05</div>
+      <div class="why-icon">📦</div>
+      <div class="why-title">Always Stocked</div>
+      <p class="why-text">From last-minute exam needs to weekend project supplies — if you need it, we have it. Every single day.</p>
+    </div>
+    <div class="why-card reveal reveal-delay-3">
+      <div class="why-number">06</div>
+      <div class="why-icon">🤝</div>
+      <div class="why-title">Made for Your Vibe</div>
+      <p class="why-text">Not your grandparent's stationery shop. Paperhood is designed for a generation that takes their aesthetics seriously.</p>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<div class="experience-section" id="experience">
+  <div class="experience-visual reveal">
+    <div class="exp-box main">🖊️</div>
+    <div class="exp-box accent">
+      <div class="num">100+</div>
+      <div class="label">Curated Products</div>
+    </div>
+  </div>
+  <div class="experience-text">
+    <div class="section-label">The Space</div>
+    <h2 class="section-title reveal">Come For the<br><span class="italic">Stationery.</span><br>Stay For the Vibe.</h2>
+    <p style="font-size:0.9rem; color:var(--text2); line-height:1.9; margin-top:1.5rem;" class="reveal reveal-delay-1">
+      Paperhood isn't just a shop — it's a creative space designed to feel good. Clean shelves. Curated lighting. Products you'll want to post about.
+    </p>
+    <ul class="exp-list reveal reveal-delay-2">
+      <li>Thoughtfully arranged product displays you'll actually enjoy browsing</li>
+      <li>New arrivals every few weeks to keep things fresh</li>
+      <li>A quiet, welcoming spot steps from school</li>
+      <li>Staff who understand what students actually need</li>
+      <li>Located in Pathamadai — the heart of the community</li>
+    </ul>
+    <div style="margin-top:2.5rem;" class="reveal reveal-delay-3">
+      <a href="tel:9597874791" class="btn-primary"><span>📞 Call Us Now</span></a>
+    </div>
+  </div>
+</div>
+
+<!-- SOCIAL / GALLERY -->
+<section class="social-section" id="social">
+  <div class="reveal" style="text-align:center">
+    <div class="section-label" style="justify-content:center">Student Moments</div>
+    <h2 class="section-title" style="text-align:center">Your Desk,<br><span class="italic">Elevated.</span></h2>
+  </div>
+  <div class="social-grid">
+    <div class="social-card reveal reveal-delay-1" style="background:#1a1a18; font-size:3rem;">📓
+      <div class="social-overlay">
+        <div class="social-overlay-text">Study Setup</div>
+        <div class="social-tag">#paperhood</div>
+      </div>
+    </div>
+    <div class="social-card reveal reveal-delay-2" style="background:#161614; font-size:3rem;">✒️
+      <div class="social-overlay">
+        <div class="social-overlay-text">Premium Pens</div>
+        <div class="social-tag">#writeinStyle</div>
+      </div>
+    </div>
+    <div class="social-card reveal reveal-delay-3" style="background:#1c1a16; font-size:3rem;">🎨
+      <div class="social-overlay">
+        <div class="social-overlay-text">Colour Notes</div>
+        <div class="social-tag">#aestheticStudy</div>
+      </div>
+    </div>
+    <div class="social-card reveal reveal-delay-1" style="background:#181816; font-size:3rem;">📐
+      <div class="social-overlay">
+        <div class="social-overlay-text">Exam Ready</div>
+        <div class="social-tag">#CBSElife</div>
+      </div>
+    </div>
+    <div class="social-card reveal reveal-delay-2" style="background:#1a1916; font-size:3rem;">🗓️
+      <div class="social-overlay">
+        <div class="social-overlay-text">Plan Your Week</div>
+        <div class="social-tag">#studyPlanner</div>
+      </div>
+    </div>
+    <div class="social-card reveal reveal-delay-3" style="background:#161614; font-size:3rem;">⭐
+      <div class="social-overlay">
+        <div class="social-overlay-text">5 Star Picks</div>
+        <div class="social-tag">#papercraft</div>
+      </div>
+    </div>
+  </div>
+  <p class="social-label reveal">Tag us <a href="#">@paperhood.store</a> and get featured here</p>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+  <p class="cta-eyebrow reveal">We're Open Every Day</p>
+  <h2 class="cta-title reveal">Visit Us in<br>Pathamadai.</h2>
+  <p class="cta-sub reveal">Come experience what students are talking about.</p>
+  <a href="tel:9597874791" class="btn-dark reveal">📍 Find Paperhood</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo">Paper<span>hood</span></div>
+      <p>A premium student stationery experience in the heart of Pathamadai. Where ambition meets aesthetic.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Collections</h4>
+      <ul>
+        <li><a href="#">Premium Pens</a></li>
+        <li><a href="#">Notebooks</a></li>
+        <li><a href="#">Exam Kits</a></li>
+        <li><a href="#">Art Supplies</a></li>
+        <li><a href="#">Study Planners</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Our Story</a></li>
+        <li><a href="#">Student Offers</a></li>
+        <li><a href="#">Gallery</a></li>
+      </ul>
+    </div>
+    <div class="footer-col" id="contact-details">
+      <h4>Find Us</h4>
+      <div class="footer-contact-item">
+        <span class="contact-icon">📍</span>
+        <div class="contact-info">Pathamadai, Tirunelveli,<br>Tamil Nadu — 627414</div>
+      </div>
+      <div class="footer-contact-item">
+        <span class="contact-icon">📞</span>
+        <div class="contact-info"><a href="tel:9597874791">+91 95978 74791</a></div>
+      </div>
+      <div class="footer-contact-item">
+        <span class="contact-icon">✉️</span>
+        <div class="contact-info"><a href="mailto:virture2010@gmail.com">virture2010@gmail.com</a></div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2024 Paperhood · Pathamadai · All rights reserved</span>
+    <div class="footer-social">
+      <a href="#">Instagram</a>
+      <a href="#">WhatsApp</a>
+      <a href="#">Google Maps</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Custom Cursor
+  const cursor = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursorRing');
+  let cx = 0, cy = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    cx = e.clientX; cy = e.clientY;
+    cursor.style.left = cx + 'px';
+    cursor.style.top = cy + 'px';
+  });
+
+  function animRing() {
+    rx += (cx - rx) * 0.12;
+    ry += (cy - ry) * 0.12;
+    cursorRing.style.left = rx + 'px';
+    cursorRing.style.top = ry + 'px';
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+
+  document.querySelectorAll('a, button, .product-card, .why-card, .social-card').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.classList.add('expanded');
+      cursorRing.classList.add('expanded');
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.classList.remove('expanded');
+      cursorRing.classList.remove('expanded');
+    });
+  });
+
+  // Navbar scroll
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+  reveals.forEach(el => observer.observe(el));
+
+  // Parallax text
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY;
+    document.querySelectorAll('.parallax-text').forEach(el => {
+      el.style.transform = `translateY(calc(-50% + ${scrolled * 0.08}px))`;
+    });
+  });
+</script>
+</body>
+</html>
